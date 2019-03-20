@@ -15,7 +15,9 @@ For each model, we experiment it with various data augmentation techniques:
 * Traditional data augmentation techniques
 * Data Augmentation with GAN
 
-Sample Experimental Results Table:
+Sample Experimental Results Table:<br/>
+<br/>
+
 |                    | No Augmentation | Augmentation 1 | Augmentation 2 | GAN |
 |--------------------|-----------------|----------------|----------------|-----|
 | Model from Scratch |                 |                |                |     |
