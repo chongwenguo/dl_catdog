@@ -1,3 +1,4 @@
+
 from __future__ import print_function, division
 
 import torch
@@ -12,7 +13,7 @@ import os
 import data_preprocessing as ds
 
 
-def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
+def train_model(model, criterion, optimizer, scheduler, num_epochs=5):
     since = time.time()
 
     best_model_wts = model.state_dict()
@@ -118,4 +119,4 @@ if __name__ == '__main__':
                            criterion=criterion,
                            optimizer=optimizer_ft,
                            scheduler=exp_lr_scheduler,
-                           num_epochs=25)
+                           num_epochs=5)
