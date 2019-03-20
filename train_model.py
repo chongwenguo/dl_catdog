@@ -86,7 +86,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
     return model
 
 if __name__ == '__main__':
-    data_dir = 'data/species/'
+    data_dir = 'data/trainval/species/'
     trainloader, testloader = ds.load_split_train_test(data_dir, .2)
 
 
