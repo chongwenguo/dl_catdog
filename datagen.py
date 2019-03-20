@@ -119,10 +119,14 @@ if __name__ == '__main__':
         if not os.path.exists("data/trainval/species/dog/"):
                 os.mkdir("data/trainval/species/dog/")
         copyfile(file_name_path + image_name, "data/trainval/species/"+ species + '/' + image_name)
-        if not os.path.exists("data/trainval/breeds/"+ breed_name):
-            os.mkdir("data/trainval/breeds/"+ breed_name)
-        copyfile(file_name_path + image_name, "data/trainval/breeds/"+ breed_name + '/' + image_name)
-
+        if species == 'cat':
+            if not os.path.exists("data/trainval/breeds_cat/"+ breed_name):
+                os.mkdir("data/trainval/breeds_cat/"+ breed_name)
+            copyfile(file_name_path + image_name, "data/trainval/breeds_cat/"+ breed_name + '/' + image_name)
+        if species == 'dog':
+            if not os.path.exists("data/trainval/breeds_dog/" + breed_name):
+                os.mkdir("data/trainval/breeds_cat/" + breed_name)
+            copyfile(file_name_path + image_name, "data/trainval/breeds_dog/" + breed_name + '/' + image_name)
 
     for line in test:
         if '#' in line:
@@ -142,10 +146,14 @@ if __name__ == '__main__':
         if not os.path.exists("data/test/species/dog/"):
                 os.mkdir("data/test/species/dog/")
         copyfile(file_name_path + image_name, "data/test/species/"+ species + '/' + image_name)
-        if not os.path.exists("data/test/breeds/"+ breed_name):
-            os.mkdir("data/test/breeds/"+ breed_name)
-        copyfile(file_name_path + image_name, "data/test/breeds/"+ breed_name + '/' + image_name)
-
+        if species == 'cat':
+            if not os.path.exists("data/test/breeds_cat/"+ breed_name):
+                os.mkdir("data/test/breeds_cat/"+ breed_name)
+            copyfile(file_name_path + image_name, "data/trainval/breeds_cat/"+ breed_name + '/' + image_name)
+        if species == 'dog':
+            if not os.path.exists("data/test/breeds_dog/" + breed_name):
+                os.mkdir("data/test/breeds_dog/" + breed_name)
+            copyfile(file_name_path + image_name, "data/test/breeds_dog/" + breed_name + '/' + image_name)
 
 
  # map = {"Abyssinian":197,
