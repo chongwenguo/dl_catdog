@@ -4,7 +4,7 @@ Load data
 
 import os
 import traceback
-import cv2
+#import cv2
 import numpy as np
 from PIL import Image
 from shutil import copyfile

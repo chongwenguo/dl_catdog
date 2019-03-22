@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 import torchvision.models
 import torch.nn as nn
 import torch.optim as optim
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 
 def load_split_train_test(data_dir, valid_size = .2):

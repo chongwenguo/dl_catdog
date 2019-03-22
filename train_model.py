@@ -11,7 +11,7 @@ from torchvision import datasets, models, transforms
 import time
 import os
 import data_preprocessing as ds
-
+import matplotlib.pyplot as plt
 
 def train_model(model, criterion, optimizer, scheduler, num_epochs=5):
     since = time.time()
@@ -98,7 +98,7 @@ if __name__ == '__main__':
 
     # use gpu or not
     use_gpu = torch.cuda.is_available()
-
+    #print (torch.cuda.is_available())
     # get model and replace the original fc layer with your fc layer
     model_ft = models.resnet18(pretrained=True)
     num_ftrs = model_ft.fc.in_features
@@ -120,3 +120,4 @@ if __name__ == '__main__':
                            optimizer=optimizer_ft,
                            scheduler=exp_lr_scheduler,
                            num_epochs=5)
+    torch.save(model_ft, './catdogmodel.pth')
