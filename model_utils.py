@@ -5,18 +5,8 @@ import numpy as np
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.autograd import Variable
 
-def load_split_train_val(datadir, normalize, valid_size = .25):
+def load_split_train_val(datadir, train_transforms, val_transforms, normalize, valid_size = .25):
 
-    train_transforms = transforms.Compose([transforms.Resize(224),
-                                        transforms.CenterCrop(224),
-                                       transforms.ToTensor(),
-                                       normalize
-                                       ])
-    val_transforms = transforms.Compose([transforms.Resize(224),
-                                     transforms.CenterCrop(224),
-                                      transforms.ToTensor(),
-                                      normalize
-                                      ])
     train_data = torchvision.datasets.ImageFolder(datadir,
                     transform=train_transforms)
     val_data = torchvision.datasets.ImageFolder(datadir,
@@ -26,14 +16,11 @@ def load_split_train_val(datadir, normalize, valid_size = .25):
     classes = train_data.classes
     split = int(np.floor(valid_size * num_train))
     np.random.shuffle(indices)
-    from torch.utils.data.sampler import SubsetRandomSampler
     train_idx, val_idx = indices[split:], indices[:split]
     train_sampler = SubsetRandomSampler(train_idx)
     val_sampler = SubsetRandomSampler(val_idx)
-    trainloader = torch.utils.data.DataLoader(train_data,
-                   sampler=train_sampler, batch_size=1)
-    valloader = torch.utils.data.DataLoader(val_data,
-                   sampler=val_sampler, batch_size=1)
+    trainloader = torch.utils.data.DataLoader(train_data,sampler=train_sampler, batch_size=1)
+    valloader = torch.utils.data.DataLoader(val_data,sampler=val_sampler, batch_size=1)
     dataiter = iter(trainloader)
     images, labels = dataiter.next()
     return trainloader, valloader, classes, labels
@@ -98,12 +85,8 @@ def train_model(model, criterion, optimizer, scheduler, trainloader, valloader, 
     model.load_state_dict(best_model_wts)
     return model
 
-def print_test_acc(model, normalize, test_data_dir):
-    test_transforms = transforms.Compose([transforms.Resize(224),
-                                          transforms.CenterCrop(224),
-                                          transforms.ToTensor(),
-                                          normalize
-                                          ])
+def print_test_acc(model, test_transforms, normalize, test_data_dir):
+    
     test_data = torchvision.datasets.ImageFolder(test_data_dir, transform=test_transforms)
     classes = test_data.classes
     testloader = torch.utils.data.DataLoader(test_data, batch_size=1)
