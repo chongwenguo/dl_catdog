@@ -5,10 +5,8 @@ import numpy as np
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.autograd import Variable
 
-def load_split_train_val(datadir, valid_size = .25):
+def load_split_train_val(datadir, normalize, valid_size = .25):
 
-    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                              std=[0.229, 0.224, 0.225])
     train_transforms = transforms.Compose([transforms.Resize(224),
                                         transforms.CenterCrop(224),
                                        transforms.ToTensor(),
