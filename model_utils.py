@@ -5,13 +5,33 @@ import numpy as np
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.autograd import Variable
 
+import os
+import matplotlib.pyplot as plt
+
+def load_data(breeds, train_transforms, val_transforms, batch_size):
+    train_path = os.path.join('data/masked_images/data/train/', breeds)
+    val_path = os.path.join('data/masked_images/data/val', breeds)
+    train_data = torchvision.datasets.ImageFolder(train_path,
+                    transform=train_transforms)
+    val_data = torchvision.datasets.ImageFolder(val_path,
+                    transform=val_transforms)
+
+    img, label = train_data[300]
+    
+    train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
+    val_loader = torch.utils.data.DataLoader(val_data, batch_size=batch_size, shuffle=True)
+    classes = train_data.classes
+    return train_loader, val_loader, classes
+
+
+
 def load_split_train_val(datadir, train_transforms, val_transforms, normalize, valid_size = .25):
 
     train_data = torchvision.datasets.ImageFolder(datadir,
                     transform=train_transforms)
     val_data = torchvision.datasets.ImageFolder(datadir,
                     transform=val_transforms)
-    num_train = len(train_data)
+    num_train = len(train_data) # train + val
     indices = list(range(num_train))
     classes = train_data.classes
     split = int(np.floor(valid_size * num_train))
