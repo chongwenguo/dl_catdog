@@ -15,8 +15,6 @@ def load_data(breeds, train_transforms, val_transforms, batch_size):
                     transform=train_transforms)
     val_data = torchvision.datasets.ImageFolder(val_path,
                     transform=val_transforms)
-
-    img, label = train_data[300]
     
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_data, batch_size=batch_size, shuffle=True)
