@@ -4,6 +4,7 @@ import torch
 import numpy as np
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.autograd import Variable
+import torch.nn.functional as F 
 
 import os
 import matplotlib.pyplot as plt
@@ -19,7 +20,7 @@ def load_data(breeds, train_transforms, val_transforms, batch_size):
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_data, batch_size=batch_size, shuffle=True)
     classes = train_data.classes
-    return train_loader, val_loader, classes
+    return train_loader, val_loader, classes, len(train_data), len(val_data)
 
 
 
@@ -44,9 +45,11 @@ def load_split_train_val(datadir, train_transforms, val_transforms, normalize, v
     return trainloader, valloader, classes, labels
 
 
-def train_model(model, criterion, optimizer, scheduler, trainloader, valloader, num_epochs=5):
-    dataset_sizes = {
-        "train": len(trainloader),
+
+
+def train_model(model, criterion, optimizer, scheduler, trainloader, valloader, num_epochs=5, dataset_entries=None):
+    dataset_sizes = {          # number of batches
+        "train": len(trainloader), 
         "val": len(valloader)
     }
     best_model_wts = model.state_dict()
@@ -67,7 +70,6 @@ def train_model(model, criterion, optimizer, scheduler, trainloader, valloader, 
                 dataloader = valloader
             running_loss = 0.0
             running_corrects = 0.0
-
             for data in dataloader:
                 inputs, labels = data
 
@@ -80,17 +82,20 @@ def train_model(model, criterion, optimizer, scheduler, trainloader, valloader, 
                 optimizer.zero_grad()
 
                 outputs = model(inputs)
+
                 _, preds = torch.max(outputs.data, 1)
                 loss = criterion(outputs, labels)
 
                 if phase == 'train':
                     loss.backward()
-                    optimizer.step()
+                    optimizer.step()              
 
                 running_loss += loss.data
                 running_corrects += torch.sum(preds == labels.data).to(torch.float32)
+
+            
             epoch_loss = running_loss / dataset_sizes[phase]
-            epoch_acc = running_corrects / dataset_sizes[phase]
+            epoch_acc = running_corrects / dataset_entries[phase]
 
             print('{} Loss: {:.4f} Acc: {:.4f}'.format(
                 phase, epoch_loss, epoch_acc))
