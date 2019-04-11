@@ -64,11 +64,15 @@ A figure that conveys the main idea behind the project or the main application b
       <br>
       <!-- Introduction -->
       <h2>Introduction / Background / Motivation</h2>
+
       
-      <h4>Classification Problems and Dataset</h4>
-      In this project, three classifiers via images are trained and evaluated, which include binary classification: cat
-      vs dogs, breed classification for cats, breed classification for dogs. The project consists of three major stages:
-      build models from scratch, fine-tune pre-trained models and data augmentation with GAN.
+      <h4>Introduction</h4>
+      This project aims to examine whether modern computer vision techniques work well in classification problems where
+      different classes of images have relatively high similarities. The dataset we chose for this project is 
+      the Oxford-IIIT Pet Dataset published by VGG group. 
+      We are interested in three classification problems: binary classification of cats and dogs, cat breeds classification,
+      and dog breeds classification. 
+      The project consists of three major stages: build models from scratch, fine-tune pre-trained models and data augmentation with GAN.
       The Oxford-IIIT Pet Dataset contains 37 categories of pets with roughly 200 images for each class. The images have
       a large variations in scale, pose and lighting. Due to high inter class variability, low intra class variability
       and high pose variability, it is not easy to train and obtain a high accarucy breed-classifier, especially when
@@ -103,26 +107,56 @@ A figure that conveys the main idea behind the project or the main application b
 
       <br><br>
 
+      <h4>Motivation</h4>
+      Image Classification is one of the most common task in computer vision which are well-studied over past few years. 
+      Model architectures have been improved from basic convolutional neural networks to some more complex models such as
+      ResNet, Inception, etc. However, majority of these models are tested in common classification tasks such as ImageNet, 
+      where most classes expose a relatively low similarity to each other. Therefore, we are interested in whether modern 
+      computer vision models have enough power to do classification problems like this. 
+      Another motivation is the limitation of data. People usually claim that for complex image classfication problems, 
+      at least 1000 images per class are necessary. In our dataset, each breed only has approximately 200 samples, which are
+      far more from this widely accepted requirement. We are then interested in how well classifiers can do when images are not
+      sufficient and whether data augmentation techniques could improve the performance of our models. 
+      <br><br>
 
-      <h4>Related Works</h4>
-      Fine-grained recognition work has been demonstrated on cats and dogs by O. M. Parkhi, A. Vedaldi, A. Zisserman and
-      C. V. Jawahar, which trained 63.48% and 55.68% accuracy breed classification for cats and dogs respectively, which
-      improved to 66.07% and 59.18% when the ground truth segmentations are used.
+
+      <h4>Backgrounds</h4>
+      
+      For this dataset specifically, fine-grained recognition works has been demonstrated on cats and dogs by 
+      O. M. Parkhi, A. Vedaldi, A. Zisserman and C. V. Jawahar, which trained 63.48% and 55.68% accuracy breed classification 
+      for cats and dogs respectively, which improved to 66.07% and 59.18% when the ground truth segmentations are used.
+      We are using these models as our baselines. We are looking forward to check if we can build a model from scratch with potential data 
+      augmentation techniques to beat them. 
 
       <br><br>
       <!-- Approach -->
       <h2>Approach</h2>
       <h4>What do you plan to do exactly? How will you solve the problem? Why do you think it will
         be successful? Is anything new in your approach? </h4>
-      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      The project has two main stages: building models and implementing data augmentation.
+      First, the first model we want to try is to fine-tuning some famous pre-trained models. We want to see if this approach can give
+      any promising results in our task. If so, this fine-tining model is used as our new baseline. 
+      Second, we are building models from scratch to see if we can beat baselines(either fine-tuning models or models mentioned in background
+      section). Even though there are various large famous architectures in community such as ResNet and GoogleNet, they are too big to be fit
+      in our small GPUs. We are trying to build our customized models with some ideas borrowed from those famous architectures but not using their 
+      exact models. 
+      Once we have such a model, we will include data augmentation in our training process. We'll start with some standard operations and see if 
+      performance can be improved. Then, we will implement data augmentation by GAN, which is more complex than simpple image operations. 
+
+
 
       <br><br>
       <!-- Results -->
       <h2>Experimental Plan</h2>
       <h4>How do you plan to measure success? What datasets are you using and what experiments
           will you carry out? </h4>
-      Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores
-      eos qui ratione voluptatem sequi nesciunt.
+      Our experimental plan follows our plan of attack. There are three main tasks we need to experiment: dog-cat binary classification, cat breeds classificaion and dog breeds classification. For each of them, our experiments are organized as follows:
+      Two main models are used: the model we build from scratch and fine-tuning models. 
+      For fine-tuning models, we pick ResNet-50 because of it's promising performance on other tasks and the size of its model. 
+      For each model, we also experiment it with different data augmentaiton techniques, namely, no augmentation included, one or two standard data 
+      augmentation approach, and one data augmentation technique by GAN. 
+
+      We are curious to see whether we can build a model to beat baselines and how much the model performance can be improved by data augmentation. 
 
       <br><br>
 
