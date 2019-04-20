@@ -142,8 +142,8 @@ def main(args):
 
     # #evaluate('test', verbose=True)
     # torch.save(model, args.model + '.pt')
-    data_dir = 'data/masked_images/data/trainval/breeds_cat/'
-    test_data_dir = 'data/masked_images/data/test/breeds_cat/'
+    data_dir = 'data/trainval/breeds_cat/'
+    test_data_dir = 'data/test/breeds_cat/'
 
     normalize = torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                       std=[0.229, 0.224, 0.225])
@@ -171,6 +171,9 @@ def main(args):
 
 
     model = train(model, criterion, trainloader, valloader, optimizer, scheduler, args.epochs, log_interval=10)
+
+    save_path = './trained_model/cat_scratch.pth'
+    torch.save(model, saving_path)
 
 
 if __name__ == '__main__':
