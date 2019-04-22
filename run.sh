@@ -5,5 +5,5 @@ python -u train.py \
     --lr 0.001 \
     --momentum 0.9 \
     --weight-decay 0.5 \
-    --batch-size 32 \
-    --epochs 60 | tee cat_scratch.log
+    --batch-size 26 \
+    --epochs 20 | tee cat_scratch.log

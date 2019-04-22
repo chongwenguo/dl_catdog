@@ -10,17 +10,21 @@ import os
 import matplotlib.pyplot as plt
 
 def load_data(breeds, train_transforms, val_transforms, batch_size):
-    train_path = os.path.join('data/masked_images/data/train/', breeds)
-    val_path = os.path.join('data/masked_images/data/val', breeds)
+    train_path = os.path.join('data/train/', breeds)
+    val_path = os.path.join('data/val', breeds)
+    test_path = os.path.join('data/test', breeds)
     train_data = torchvision.datasets.ImageFolder(train_path,
                     transform=train_transforms)
     val_data = torchvision.datasets.ImageFolder(val_path,
                     transform=val_transforms)
+    test_data = torchvision.datasets.ImageFolder(test_path, 
+                    transform=val_transforms)
     
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_data, batch_size=batch_size, shuffle=True)
+    test_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=True)
     classes = train_data.classes
-    return train_loader, val_loader, classes, len(train_data), len(val_data)
+    return train_loader, val_loader, classes, len(train_data), len(val_data), test_loader, len(test_data)
 
 
 

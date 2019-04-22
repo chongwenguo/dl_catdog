@@ -149,32 +149,43 @@ def main(args):
                                       std=[0.229, 0.224, 0.225])
 
     train_transforms = transforms.Compose([transforms.Resize((299, 299)),
-                                            #transforms.CenterCrop(224),
+                                           #transforms.CenterCrop(224),
+                                           #transforms.RandomResizedCrop((299, 229)),
+                                           transforms.RandomHorizontalFlip(),
                                            transforms.ToTensor(),
                                            normalize
                                            ])
     test_transforms = transforms.Compose([transforms.Resize((299, 299)),
-                                            #transforms.CenterCrop(224),
+                                           #transforms.CenterCrop((229, 229)),
                                            transforms.ToTensor(),
                                            normalize
                                            ])
     #trainloader, valloader, classes, labels = model_utils.load_split_train_val(data_dir, train_transforms, test_transforms, normalize, .25)
-    trainloader, valloader, classes, n_train, n_val = model_utils.load_data('breeds_cat', train_transforms, test_transforms, batch_size=args.batch_size)
+    trainloader, valloader, classes, n_train, n_val, testloader, n_test = model_utils.load_data('breeds_cat', train_transforms, test_transforms, batch_size=args.batch_size)
 
     im_size = (3, 299, 299)
     model = BreedClassifier(im_size, len(classes))
+    #model = torchvision.models.resnet50(pretrained=True)
+    #model = torchvision.models.resnet18(pretrained=False)
+
+
+    #num_features = model.fc.in_features
+    #model.fc = nn.Linear(num_features, len(classes))
     criterion = F.cross_entropy
 
-    optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+    optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     scheduler = lr_scheduler.StepLR(optimizer, step_size=5, gamma=args.weight_decay)
 
-
+    device = torch.device("cuda:5")
+    model.to(device)
     model = train(model, criterion, trainloader, valloader, optimizer, scheduler, args.epochs, log_interval=10)
 
     save_path = './trained_model/cat_scratch.pth'
-    torch.save(model, saving_path)
+    torch.save(model, save_path)
 
+    test_loss, acc = evaluate(model, 'test', criterion, test_loader=testloader)
+    print("Test Acc: %0.4f" % acc)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='One Run of Experiment')

@@ -1,15 +1,15 @@
-import numpy as np 
-import torch 
+import numpy as np
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 class BasicConv2d(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0):
         super(BasicConv2d, self).__init__()
-        self.conv = nn.Conv2d(in_channels, out_channels, 
+        self.conv = nn.Conv2d(in_channels, out_channels,
                               kernel_size=kernel_size, stride=stride,
                               padding=padding, bias=False)
-        self.bn = nn.BatchNorm2d(out_channels, 
+        self.bn = nn.BatchNorm2d(out_channels,
                                  eps=0.001,
                                  momentum=0.1,
                                  affine=True)
@@ -34,7 +34,7 @@ class ResLayer(nn.Module):
         out = self.layer3(out)
         out += x
         out = self.relu(out)
-        return out 
+        return out
 
 class InceptionD(nn.Module):
     def __init__(self, in_channels):
@@ -66,7 +66,7 @@ class InceptionD(nn.Module):
 
         return torch.cat(outputs, 1)
 
-        
+
 
 class InceptionR(nn.Module):
     def __init__(self, in_channels):
@@ -121,12 +121,12 @@ class BreedClassifier(nn.Module):
         c = im_size[0] # channel
         h = im_size[1] # height
         w = im_size[2] # weight
-        
+
         # Build a Model
         self.conv_1 = BasicConv2d(c, 32, 3, stride=2, padding=1)
         w = (w - 3 + 2 * 1) // 2 + 1
         h = (h - 3 + 2 * 1) // 2 + 1
-        
+
 
         self.conv_2 = BasicConv2d(32, 32, 3, stride=1, padding=1)
         w = (w - 3 + 2 * 1) // 1 + 1
@@ -151,28 +151,29 @@ class BreedClassifier(nn.Module):
         self.conv_6 = BasicConv2d(128, 128, 3, stride=1, padding=1)
         w = (w - 3 + 2 * 1) // 1 + 1
         h = (h - 3 + 2 * 1) // 1 + 1
-        
+
         self.pool_2 = nn.MaxPool2d(kernel_size=3, stride=2, padding=0)
         w = (w - 3) // 2 + 1
         h = (h - 3) // 2 + 1
         #################### Pre-Inception ###########################
-        self.inception_1 = InceptionR(128)
-        self.inception_2 = InceptionR(448)
+        self.inception_0 = InceptionR(128)
+        self.inception_1 = InceptionR(320)
+        self.inception_2 = InceptionR(640)
         self.pool_3 = nn.AvgPool2d(kernel_size=2, stride=2, padding=0)
         w = (w - 2) // 2 + 1
         h = (h - 2) // 2 + 1
 
-        self.res_1 = ResLayer(128)
-        self.res_2 = ResLayer(448)
+        self.res_1 = ResLayer(320)
+        self.res_2 = ResLayer(640)
 
-        self.inception_3 = InceptionD(768)
+        self.inception_3 = InceptionD(960)
         w = (w - 4) // 2 + 1
         h = (h - 4) // 2 + 1
         self.pool_4 = nn.AvgPool2d(kernel_size=2, stride=2, padding=0)
         w = (w - 2) // 2 + 1
         h = (h - 2) // 2 + 1
 
-        # Post Inception      
+        # Post Inception
         self.fc_1 = nn.Linear(2048 * w * h, n_classes)
 
     def forward(self, images):
@@ -191,22 +192,23 @@ class BreedClassifier(nn.Module):
             A torch Variable of size (N, n_classes) specifying the score
             for each example and category.
         '''
-        scores = None 
+        scores = None
 
         x = self.conv_1(images)
         x = self.conv_2(x)
         x = self.conv_3(x)
-        
+
         x = self.pool_1(x)
 
         x = self.conv_4(x)
         x = self.conv_5(x)
         x = self.conv_6(x)
-        
+
         x = self.pool_2(x)
 
-        
+
         ########### Pre-Inception ########################
+        x = self.inception_0(x)
         x_i = self.inception_1(x)
         x_r = self.res_1(x)
         x = torch.cat([x_i, x_r], 1)
