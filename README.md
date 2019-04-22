@@ -18,7 +18,8 @@ For each model, we experiment it with various data augmentation techniques:
 Sample Experimental Results Table:<br/>
 <br/>
 
-|                    | No Augmentation | Augmentation 1 | Augmentation 2 | GAN |
-|--------------------|-----------------|----------------|----------------|-----|
-| Model from Scratch |                 |                |                |     |
-| Fine-tuned Model   |                 |                |                |     |
+|                    | No Augmentation | Augmentation 1 | GAN |
+|--------------------|-----------------|----------------|-----|
+| Model from Scratch |      0.3737     |       0.3758   | N/A |
+| Resnet from Scratch|      0.4168     |       0.4536   | N/A |
+| Fine-tuned Model   |      0.7797     |       0.8035   | N/A |
