@@ -14,9 +14,10 @@ import os
 import torch.optim as optim
 from models.cat_scratch import BreedClassifier
 from torch.optim import lr_scheduler
-
+import pandas as pd
+import matplotlib.pyplot as plt
 import model_utils
-
+plt.switch_backend('agg')
 
 def evaluate(model, split, criterion, verbose=False, n_batches=None, val_loader=None, test_loader=None):
     '''
@@ -58,7 +59,7 @@ def evaluate(model, split, criterion, verbose=False, n_batches=None, val_loader=
     return loss, acc
 
 
-def train(model, criterion, train_loader, val_loader, optimizer, scheduler, num_epochs, log_interval=10):
+def train(model, criterion, train_loader, val_loader, optimizer, scheduler, num_epochs, log_interval=10, batch_size=16):
     best_model_wts = model.state_dict()
     best_acc = 0.0
     location = None
@@ -66,7 +67,10 @@ def train(model, criterion, train_loader, val_loader, optimizer, scheduler, num_
     use_gpu = torch.cuda.is_available()
     if use_gpu:
     	model = model.cuda()
-
+    trainLoss = []
+    valLoss = []
+    batches = []
+    idx = 0
     for epoch in range(0, num_epochs):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         print('-' * 10)
@@ -103,8 +107,23 @@ def train(model, criterion, train_loader, val_loader, optimizer, scheduler, num_
                 	best_acc = val_acc
                 	best_model_wts = model.state_dict()
                 	location = (epoch, batch_idx)
+                trainLoss.append(train_loss.data)
+                valLoss.append(val_loss.data)
+                batches.append(idx)
+                idx += 1
     print('Best val Acc: {:4f} obtained at epoch: {}, batch: {}'.format(best_acc, location[0], location[1]))
     model.load_state_dict(best_model_wts)
+
+    plt.plot(batches, trainLoss, label='training loss')
+    plt.plot(batches, valLoss, label='validation loss')
+    plt.title("learning curve")
+    plt.legend()
+    plt.xlabel("batches")
+    plt.ylabel("loss")
+    plt.savefig("lc.png")
+
+    #stats = pd.DataFrame({"batch":batches, "train":trainLoss, "val":valLoss})
+    #stats.to_csv("scratch_loss.csv", index=False)
     return model
 
 def main(args):
@@ -164,8 +183,8 @@ def main(args):
     trainloader, valloader, classes, n_train, n_val, testloader, n_test = model_utils.load_data('breeds_cat', train_transforms, test_transforms, batch_size=args.batch_size)
 
     im_size = (3, 299, 299)
-    model = BreedClassifier(im_size, len(classes))
-    #model = torchvision.models.resnet50(pretrained=True)
+    #model = BreedClassifier(im_size, len(classes))
+    model = torchvision.models.resnet50(pretrained=True)
     #model = torchvision.models.resnet18(pretrained=False)
 
 
@@ -179,7 +198,7 @@ def main(args):
 
     device = torch.device("cuda:5")
     model.to(device)
-    model = train(model, criterion, trainloader, valloader, optimizer, scheduler, args.epochs, log_interval=10)
+    model = train(model, criterion, trainloader, valloader, optimizer, scheduler, args.epochs, log_interval=10, batch_size=args.batch_size)
 
     save_path = './trained_model/cat_scratch.pth'
     torch.save(model, save_path)
